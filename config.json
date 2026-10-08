@@ -1,6 +1,7 @@
 {
-    "title":"sudoku blog",
-    "subTitle":"67",
-    "avatarUrl":"https://avatars.githubusercontent.com/u/339383486?v=4&size=64",
-    "GMEEK_VERSION":"last"
+    "title": "sudoku blog",
+    "subTitle": "67",
+    "avatarUrl": "https://avatars.githubusercontent.com/u/339383486?v=4&size=64",
+    "GMEEK_VERSION": "last",
+    "allHead": "<script>window.UBU_BASE=/^\\/sudoku\\.github\\.io(\\/|$)/.test(location.pathname)?'/sudoku.github.io':'';(function(b,d){var l=d.createElement('link');l.rel='stylesheet';l.href=b+'/ubuntu/ubuntu.css';d.head.appendChild(l);var s=d.createElement('script');s.src=b+'/ubuntu/ubuntu.js';s.async=false;d.head.appendChild(s);})(window.UBU_BASE,document);</script>"
 }
