@@ -1,0 +1,298 @@
+/* Ubuntu 26.04 风格桌面主题（Gmeek 用）
+ * 由 config.json 的 allHead 引入，配合 ubuntu.js 使用。 */
+
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu+Sans:wght@300;400;500;700&family=Ubuntu+Sans+Mono:wght@400;700&display=swap');
+
+:root {
+  --ubu-orange: #E95420;
+  --ubu-orange-hi: #F06A3A;
+  --ubu-aubergine: #2C001E;
+  --ubu-purple: #77216F;
+  --ubu-font: 'Ubuntu Sans', 'Ubuntu', -apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --ubu-mono: 'Ubuntu Sans Mono', 'Ubuntu Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+
+  /* 浅色（Yaru） */
+  --win-bg: #fafafa;
+  --win-fg: #2e3436;
+  --win-muted: #77767b;
+  --win-head: #ebebeb;
+  --win-head-inactive: #f6f5f4;
+  --win-border: rgba(0, 0, 0, .14);
+  --win-side: #f0f0f0;
+  --win-hover: rgba(0, 0, 0, .06);
+  --win-select: rgba(233, 84, 32, .16);
+  --btn-bg: rgba(0, 0, 0, .08);
+  --btn-hover: rgba(0, 0, 0, .14);
+  --entry-bg: rgba(0, 0, 0, .06);
+  --shadow: 0 2px 6px rgba(0, 0, 0, .18), 0 16px 48px rgba(0, 0, 0, .28);
+}
+
+html[data-color-mode="dark"] {
+  --win-bg: #242424;
+  --win-fg: #f6f5f4;
+  --win-muted: #9a9996;
+  --win-head: #303030;
+  --win-head-inactive: #242424;
+  --win-border: rgba(255, 255, 255, .1);
+  --win-side: #2b2b2b;
+  --win-hover: rgba(255, 255, 255, .07);
+  --win-select: rgba(233, 84, 32, .3);
+  --btn-bg: rgba(255, 255, 255, .1);
+  --btn-hover: rgba(255, 255, 255, .16);
+  --entry-bg: rgba(255, 255, 255, .08);
+  --shadow: 0 2px 6px rgba(0, 0, 0, .5), 0 16px 48px rgba(0, 0, 0, .6);
+}
+
+@media (prefers-color-scheme: dark) {
+  html[data-color-mode="auto"] {
+    --win-bg: #242424;
+    --win-fg: #f6f5f4;
+    --win-muted: #9a9996;
+    --win-head: #303030;
+    --win-head-inactive: #242424;
+    --win-border: rgba(255, 255, 255, .1);
+    --win-side: #2b2b2b;
+    --win-hover: rgba(255, 255, 255, .07);
+    --win-select: rgba(233, 84, 32, .3);
+    --btn-bg: rgba(255, 255, 255, .1);
+    --btn-hover: rgba(255, 255, 255, .16);
+    --entry-bg: rgba(255, 255, 255, .08);
+    --shadow: 0 2px 6px rgba(0, 0, 0, .5), 0 16px 48px rgba(0, 0, 0, .6);
+  }
+}
+
+/* 脚本就绪前先隐藏原始页面，避免闪一下 Gmeek 默认样式；3 秒后兜底显示 */
+html:not(.ubu-ready) body { animation: ubu-reveal 0s 3s forwards; visibility: hidden; }
+@keyframes ubu-reveal { to { visibility: visible; } }
+
+html.ubu-ready body, html.ubu-ready .markdown-body, html.ubu-ready #header { font-family: var(--ubu-font); }
+html.ubu-ready .markdown-body pre, html.ubu-ready .markdown-body code { font-family: var(--ubu-mono); }
+html.ubu-ready ::selection { background: rgba(233, 84, 32, .35); }
+html.ubu-ready .markdown-body a, html.ubu-ready #footer a { color: var(--ubu-orange); }
+
+/* ========== 桌面外壳 ========== */
+html.ubu-shell, html.ubu-shell body { height: 100%; overflow: hidden; }
+html.ubu-shell body {
+  max-width: none; margin: 0; padding: 0; color: #fff;
+  background: #2C001E url('wallpaper.svg') center / cover no-repeat;
+  -webkit-font-smoothing: antialiased;
+}
+html.ubu-shell body > #header, html.ubu-shell body > #content, html.ubu-shell body > #footer { display: none; }
+
+#ubu-top {
+  position: fixed; inset: 0 0 auto 0; height: 32px; z-index: 9000;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 8px; background: #000; color: #fff; font-size: 14px; font-weight: 500;
+  user-select: none;
+}
+#ubu-top .ubu-pill {
+  display: flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px;
+  border-radius: 12px; cursor: default; background: transparent; border: 0; color: inherit; font: inherit;
+}
+#ubu-top .ubu-pill:hover, #ubu-top .ubu-pill.on { background: rgba(255, 255, 255, .16); }
+#ubu-activities .dots { display: flex; gap: 4px; align-items: center; }
+#ubu-activities .dots i { display: block; width: 6px; height: 6px; border-radius: 3px; background: #fff; opacity: .55; }
+#ubu-activities .dots i:first-child { width: 22px; opacity: 1; }
+#ubu-clock { position: absolute; left: 50%; transform: translateX(-50%); }
+#ubu-tray svg { width: 16px; height: 16px; fill: #fff; }
+
+#ubu-dock {
+  position: fixed; left: 0; top: 32px; bottom: 0; width: 64px; z-index: 8000;
+  display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 0;
+  background: rgba(23, 23, 23, .78); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  border-right: 1px solid rgba(255, 255, 255, .06);
+}
+#ubu-dock .sep { flex: 1; }
+.ubu-dock-item {
+  position: relative; width: 52px; height: 52px; border-radius: 12px; border: 0; padding: 0;
+  display: grid; place-items: center; background: transparent; cursor: pointer;
+}
+.ubu-dock-item:hover { background: rgba(255, 255, 255, .12); }
+.ubu-dock-item svg { width: 42px; height: 42px; }
+.ubu-dock-item.running::before {
+  content: ''; position: absolute; left: 2px; top: 50%; width: 4px; height: 4px;
+  margin-top: -2px; border-radius: 2px; background: var(--ubu-orange);
+}
+.ubu-dock-item .tip {
+  position: absolute; left: 62px; top: 50%; transform: translateY(-50%);
+  padding: 6px 10px; border-radius: 8px; background: rgba(20, 20, 20, .92); color: #fff;
+  font-size: 13px; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .12s;
+}
+.ubu-dock-item:hover .tip { opacity: 1; }
+
+#ubu-desktop {
+  position: fixed; top: 44px; right: 12px; bottom: 12px; z-index: 10;
+  display: flex; flex-direction: column; flex-wrap: wrap-reverse; align-content: flex-start; gap: 8px;
+}
+.ubu-desk-icon {
+  width: 92px; padding: 6px 4px; border-radius: 10px; border: 0; background: transparent;
+  display: flex; flex-direction: column; align-items: center; gap: 4px; color: #fff; cursor: pointer;
+  font: 13px/1.25 var(--ubu-font); text-shadow: 0 1px 3px rgba(0, 0, 0, .8);
+}
+.ubu-desk-icon:hover, .ubu-desk-icon:focus { background: rgba(255, 255, 255, .16); outline: none; }
+.ubu-desk-icon svg { width: 56px; height: 56px; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .35)); }
+
+/* ========== 窗口 ========== */
+.ubu-win {
+  position: fixed; display: flex; flex-direction: column; min-width: 320px; min-height: 200px;
+  background: var(--win-bg); color: var(--win-fg); border-radius: 12px; overflow: hidden;
+  box-shadow: var(--shadow); outline: 1px solid var(--win-border);
+  resize: both; font: 14px/1.5 var(--ubu-font);
+  animation: ubu-open .16s ease-out;
+}
+@keyframes ubu-open { from { transform: scale(.94); opacity: 0; } }
+.ubu-win.closing { animation: ubu-close .12s ease-in forwards; }
+@keyframes ubu-close { to { transform: scale(.94); opacity: 0; } }
+.ubu-win.min { display: none; }
+.ubu-win.max { left: 64px !important; top: 32px !important; right: 0; bottom: 0; width: auto !important; height: auto !important; border-radius: 0; resize: none; }
+.ubu-win.max .ubu-head { border-radius: 0; }
+
+.ubu-head {
+  flex: none; height: 46px; display: flex; align-items: center; gap: 6px; padding: 0 8px;
+  background: var(--win-head); border-bottom: 1px solid var(--win-border);
+  cursor: default; user-select: none; touch-action: none;
+}
+.ubu-win:not(.focused) .ubu-head { background: var(--win-head-inactive); }
+.ubu-win:not(.focused) .ubu-title { opacity: .6; }
+.ubu-title { flex: 1; text-align: center; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 8px; }
+.ubu-head-l, .ubu-head-r { display: flex; align-items: center; gap: 6px; min-width: 96px; }
+.ubu-head-r { justify-content: flex-end; }
+.ubu-btn {
+  height: 34px; min-width: 34px; padding: 0 10px; border-radius: 8px; border: 0;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  background: transparent; color: var(--win-fg); font: inherit; cursor: pointer;
+}
+.ubu-btn:hover { background: var(--btn-hover); }
+.ubu-btn svg { width: 16px; height: 16px; fill: currentColor; }
+.ubu-ctl {
+  width: 24px; height: 24px; border-radius: 50%; border: 0; padding: 0; display: grid; place-items: center;
+  background: var(--btn-bg); color: var(--win-fg); cursor: pointer;
+}
+.ubu-ctl:hover { background: var(--btn-hover); }
+.ubu-ctl svg { width: 10px; height: 10px; stroke: currentColor; stroke-width: 1.6; fill: none; }
+.ubu-ctl.close { background: var(--ubu-orange); color: #fff; }
+.ubu-ctl.close:hover { background: var(--ubu-orange-hi); }
+.ubu-body { flex: 1; min-height: 0; overflow: auto; position: relative; }
+.ubu-body iframe { width: 100%; height: 100%; border: 0; display: block; background: var(--win-bg); }
+
+/* ========== 文件（文章列表） ========== */
+.ubu-files { display: flex; height: 100%; }
+.ubu-side { flex: none; width: 200px; padding: 8px; overflow: auto; background: var(--win-side); border-right: 1px solid var(--win-border); }
+.ubu-side h6 { margin: 12px 10px 4px; font-size: 12px; font-weight: 700; color: var(--win-muted); }
+.ubu-side button {
+  width: 100%; display: flex; align-items: center; gap: 10px; padding: 7px 10px; border: 0; border-radius: 8px;
+  background: transparent; color: var(--win-fg); font: inherit; text-align: left; cursor: pointer;
+}
+.ubu-side button:hover { background: var(--win-hover); }
+.ubu-side button.on { background: var(--win-select); font-weight: 700; }
+.ubu-side .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.ubu-side svg { width: 16px; height: 16px; fill: currentColor; flex: none; }
+.ubu-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.ubu-pathbar { flex: none; display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-bottom: 1px solid var(--win-border); }
+.ubu-pathbar .crumb { padding: 4px 12px; border-radius: 8px; background: var(--entry-bg); font-weight: 500; white-space: nowrap; }
+.ubu-search {
+  flex: 1; min-width: 80px; height: 32px; padding: 0 12px; border-radius: 8px; border: 2px solid transparent;
+  background: var(--entry-bg); color: var(--win-fg); font: inherit; outline: none;
+}
+.ubu-search:focus { border-color: var(--ubu-orange); }
+.ubu-grid { flex: 1; overflow: auto; padding: 12px; display: grid; grid-template-columns: repeat(auto-fill, minmax(116px, 1fr)); align-content: start; gap: 6px; }
+.ubu-file {
+  display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 6px; border-radius: 10px;
+  border: 0; background: transparent; color: var(--win-fg); font: inherit; cursor: pointer; text-align: center;
+}
+.ubu-file:hover { background: var(--win-hover); }
+.ubu-file:focus { background: var(--win-select); outline: none; }
+.ubu-file svg { width: 64px; height: 64px; }
+.ubu-file .name { font-size: 13px; line-height: 1.3; word-break: break-word; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.ubu-file .meta { font-size: 11px; color: var(--win-muted); }
+.ubu-empty { grid-column: 1 / -1; padding: 48px 0; text-align: center; color: var(--win-muted); }
+.ubu-status { flex: none; padding: 6px 12px; font-size: 12px; color: var(--win-muted); border-top: 1px solid var(--win-border); }
+
+/* ========== 关于 ========== */
+.ubu-about { padding: 28px 24px; text-align: center; }
+.ubu-about img { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 10px rgba(0, 0, 0, .25); }
+.ubu-about h2 { margin: 14px 0 4px; font-size: 22px; }
+.ubu-about p { margin: 0 0 18px; color: var(--win-muted); }
+.ubu-rows { text-align: left; border-radius: 12px; overflow: hidden; outline: 1px solid var(--win-border); }
+.ubu-rows div { display: flex; justify-content: space-between; gap: 12px; padding: 12px 16px; background: var(--win-side); }
+.ubu-rows div + div { border-top: 1px solid var(--win-border); }
+.ubu-rows span:last-child { color: var(--win-muted); text-align: right; }
+.ubu-rows a { color: var(--ubu-orange); text-decoration: none; }
+
+/* ========== 终端 ========== */
+.ubu-term {
+  height: 100%; overflow: auto; padding: 10px 12px; background: #300a24; color: #f2f2f2;
+  font: 14px/1.45 var(--ubu-mono); white-space: pre-wrap; word-break: break-all; cursor: text;
+}
+.ubu-term .p1 { color: #8ae234; font-weight: 700; }
+.ubu-term .p2 { color: #729fcf; font-weight: 700; }
+.ubu-term .o { color: var(--ubu-orange-hi); }
+.ubu-term .dim { color: #a59aa2; }
+.ubu-term a { color: #fce94f; }
+.ubu-term input { background: transparent; border: 0; outline: none; color: inherit; font: inherit; width: 60%; caret-color: #fff; padding: 0; }
+
+/* ========== 概览（活动） ========== */
+#ubu-overview {
+  position: fixed; inset: 32px 0 0 0; z-index: 8500; display: none;
+  align-items: center; justify-content: center; flex-direction: column; gap: 28px;
+  background: rgba(0, 0, 0, .55); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+}
+#ubu-overview.on { display: flex; animation: ubu-fade .18s; }
+@keyframes ubu-fade { from { opacity: 0; } }
+#ubu-overview .search { width: min(380px, 80vw); height: 40px; border-radius: 20px; border: 0; padding: 0 18px; background: rgba(255, 255, 255, .14); color: #fff; font: 15px var(--ubu-font); outline: none; }
+#ubu-overview .search::placeholder { color: rgba(255, 255, 255, .6); }
+#ubu-overview .apps { display: grid; grid-template-columns: repeat(4, 120px); gap: 12px; }
+#ubu-overview .apps button { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 14px 6px; border-radius: 16px; border: 0; background: transparent; color: #fff; font: 14px var(--ubu-font); cursor: pointer; }
+#ubu-overview .apps button:hover { background: rgba(255, 255, 255, .12); }
+#ubu-overview .apps svg { width: 64px; height: 64px; }
+#ubu-overview .results { width: min(560px, 90vw); max-height: 40vh; overflow: auto; display: none; }
+#ubu-overview .results button { width: 100%; display: flex; gap: 12px; align-items: center; padding: 10px 14px; border: 0; border-radius: 12px; background: transparent; color: #fff; font: 15px var(--ubu-font); text-align: left; cursor: pointer; }
+#ubu-overview .results button:hover, #ubu-overview .results button:focus { background: rgba(255, 255, 255, .12); outline: none; }
+#ubu-overview .results svg { width: 32px; height: 32px; flex: none; }
+
+/* ========== 开机画面 ========== */
+#ubu-boot {
+  position: fixed; inset: 0; z-index: 10000; background: #000; color: #fff;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;
+  transition: opacity .45s;
+}
+#ubu-boot.done { opacity: 0; pointer-events: none; }
+#ubu-boot img { width: 88px; height: 88px; border-radius: 50%; object-fit: cover; }
+#ubu-boot .name { font: 300 26px var(--ubu-font); letter-spacing: .5px; }
+#ubu-boot .spin { display: flex; gap: 10px; }
+#ubu-boot .spin i { width: 8px; height: 8px; border-radius: 50%; background: #fff; opacity: .25; animation: ubu-dot 1s infinite; }
+#ubu-boot .spin i:nth-child(2) { animation-delay: .15s; }
+#ubu-boot .spin i:nth-child(3) { animation-delay: .3s; }
+#ubu-boot .spin i:nth-child(4) { animation-delay: .45s; }
+#ubu-boot .spin i:nth-child(5) { animation-delay: .6s; }
+@keyframes ubu-dot { 30% { opacity: 1; background: var(--ubu-orange); } }
+
+/* ========== 单独打开的文章页 / 标签页（放进窗口里） ========== */
+.ubu-page { padding: 32px 40px; max-width: 960px; margin: 0 auto; }
+.ubu-page #header { border-bottom-color: var(--win-border); }
+.ubu-page .postTitle { font-size: 32px; }
+
+/* ========== 嵌在窗口 iframe 里的页面 ========== */
+html.ubu-embed body { max-width: 880px; padding: 24px 32px; margin: 0 auto; }
+html.ubu-embed #buttonHome, .ubu-page #buttonHome { display: none !important; }
+html.ubu-embed .postTitle { font-size: 30px; }
+html.ubu-embed #footer { margin-top: 40px; }
+
+/* ========== 手机 ========== */
+@media (max-width: 720px) {
+  #ubu-dock { top: auto; left: 8px; right: 8px; bottom: 8px; width: auto; height: 60px; flex-direction: row; justify-content: center; padding: 0 6px; border-radius: 18px; border: 0; }
+  #ubu-dock .sep { display: none; }
+  .ubu-dock-item { width: 48px; height: 48px; }
+  .ubu-dock-item svg { width: 38px; height: 38px; }
+  .ubu-dock-item .tip { display: none; }
+  .ubu-dock-item.running::before { left: 50%; top: auto; bottom: 1px; margin: 0 0 0 -2px; }
+  #ubu-desktop { top: 44px; left: 12px; right: 12px; bottom: 80px; flex-direction: row; flex-wrap: wrap; align-content: flex-start; }
+  .ubu-win, .ubu-win.max { left: 0 !important; top: 32px !important; right: 0; bottom: 76px; width: auto !important; height: auto !important; border-radius: 0; resize: none; min-width: 0; }
+  .ubu-ctl.maxi { display: none; }
+  .ubu-side { display: none; }
+  .ubu-head-l, .ubu-head-r { min-width: 0; }
+  #ubu-clock { position: static; transform: none; }
+  #ubu-overview .apps { grid-template-columns: repeat(3, 96px); }
+  .ubu-page { padding: 16px; }
+  html.ubu-embed body { padding: 12px; }
+}
