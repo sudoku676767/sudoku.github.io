@@ -65,6 +65,8 @@
     doc: svg('<path d="M11 4h18l10 10v28a3 3 0 0 1-3 3H11a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3z" fill="#fff" stroke="#c9c9c9"/><path d="M29 4v8a2 2 0 0 0 2 2h8" fill="#e6e6e6" stroke="#c9c9c9"/><path d="M14 22h20M14 27h20M14 32h14" stroke="#e95420" stroke-width="2" stroke-linecap="round" opacity=".75"/>'),
     terminal: svg('<rect x="4" y="7" width="40" height="34" rx="6" fill="#2c2c2c"/><rect x="4" y="7" width="40" height="7" rx="3" fill="#3d3d3d"/><path d="M12 22l6 5-6 5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 33h12" stroke="#e95420" stroke-width="2.6" stroke-linecap="round"/>'),
     about: svg('<circle cx="24" cy="24" r="20" fill="#77216f"/><circle cx="24" cy="19" r="7" fill="#fff"/><path d="M11 36c3-6 8-8 13-8s10 2 13 8" fill="#fff"/>'),
+    english: svg('<rect x="4" y="4" width="40" height="40" rx="10" fill="#26a269"/><path d="M12 33l6-18h2l6 18M14.5 27h9" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M29 20h8M33 17v3M30 31c4-2 6-6 7-11M31 25c2 3 4 5 7 6" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>'),
+    code: svg('<rect x="4" y="4" width="40" height="40" rx="10" fill="#3584e4"/><path d="M18 16l-8 8 8 8M30 16l8 8-8 8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M26 13l-4 22" stroke="#ffd166" stroke-width="2.6" stroke-linecap="round"/>'),
     tags: svg('<rect x="4" y="4" width="40" height="40" rx="10" fill="#3584e4"/><path d="M13 14h11l11 11-10 10-12-12z" fill="#fff"/><circle cx="18" cy="19" r="2.3" fill="#3584e4"/>'),
     search: svg('<rect x="4" y="4" width="40" height="40" rx="10" fill="#5e5c64"/><circle cx="21" cy="21" r="8" fill="none" stroke="#fff" stroke-width="3"/><path d="M27 27l8 8" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/>'),
     rss: svg('<rect x="4" y="4" width="40" height="40" rx="10" fill="#f6a01a"/><circle cx="15" cy="33" r="3" fill="#fff"/><path d="M12 22a14 14 0 0 1 14 14M12 13a23 23 0 0 1 23 23" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round"/>'),
@@ -220,6 +222,8 @@
   // ---------- 应用 ----------
   var APPS = [
     { id: 'files', name: '文件', icon: 'files', run: function () { openFiles(); } },
+    { id: 'cet4', name: '四级英语', icon: 'english', run: function () { openFiles({ section: 'cet4', label: '四级', title: '四级英语' }); } },
+    { id: 'code', name: '编程学习', icon: 'code', run: function () { openFiles({ section: 'code', label: '编程', title: '编程学习' }); } },
     { id: 'post', name: '文本编辑器', icon: 'doc', hidden: true },
     { id: 'tags', name: '标签与搜索', icon: 'search', run: function () { openPage('tags', '标签与搜索', BASE + '/tag.html', 'tags'); } },
     { id: 'terminal', name: '终端', icon: 'terminal', run: function () { openTerminal(); } },
@@ -257,7 +261,9 @@
     ])]);
 
     var w = openWindow({
-      id: 'files', title: '文章', w: 880, h: 560, content: root,
+      // 「四级英语」「编程学习」各自是独立的窗口，只显示对应标签的文章
+      id: opts.section ? 'files:' + opts.section : 'files', app: opts.section || 'files',
+      title: opts.title || '文章', w: 880, h: 560, content: root,
       onReuse: function (ex) { if (opts.label !== undefined && ex.setLabel) ex.setLabel(opts.label); if (opts.focusSearch && ex.search) ex.search.focus(); }
     });
     if (w.search) return w;
@@ -283,8 +289,9 @@
 
       function render() {
         side.querySelectorAll('button').forEach(function (b) { b.classList.toggle('on', (b.dataset.label || null) === state.label); });
-        crumb.textContent = state.label || '全部文章';
-        w.titleEl.textContent = state.label ? '标签：' + state.label : '文章';
+        var named = opts.title && state.label === opts.label;
+        crumb.textContent = named ? opts.title : state.label || '全部文章';
+        w.titleEl.textContent = named ? opts.title : state.label ? '标签：' + state.label : '文章';
         var q = state.q.toLowerCase();
         var list = data.posts.filter(function (p) {
           return (!state.label || p.labels.indexOf(state.label) >= 0) && (!q || p.title.toLowerCase().indexOf(q) >= 0);
@@ -408,7 +415,7 @@
   }
 
   // ---------- Dock / 顶栏 / 概览 ----------
-  var DOCK = ['files', 'tags', 'terminal', 'about', 'rss', 'github'];
+  var DOCK = ['files', 'cet4', 'code', 'tags', 'terminal', 'about', 'rss', 'github'];
   function refreshDock() {
     var running = {};
     Object.keys(wins).forEach(function (k) { running[wins[k].app] = true; });
@@ -464,7 +471,7 @@
     dock.appendChild(appsBtn);
 
     var desk = el('div', { id: 'ubu-desktop' });
-    [['files', '文章', 'folderOrange'], ['tags', '标签', 'folder'], ['about', '关于我', 'about'], ['terminal', '终端', 'terminal']].forEach(function (d) {
+    [['files', '文章', 'folderOrange'], ['cet4', '四级英语', 'english'], ['code', '编程学习', 'code'], ['tags', '标签', 'folder'], ['about', '关于我', 'about'], ['terminal', '终端', 'terminal']].forEach(function (d) {
       var b = el('button', { class: 'ubu-desk-icon', onclick: function () { if (isMobile()) launch(d[0]); }, ondblclick: function () { launch(d[0]); } });
       b.innerHTML = ICON[d[2]] + '<span>' + d[1] + '</span>';
       desk.appendChild(b);
